@@ -41,31 +41,40 @@ strong { font-weight: bold; color: #00ff00; } /* Important text: Bold light gree
 }
 .nav-list { list-style: none; }
 .nav-btn { 
-    display: block; 
+    display: flex; /* Center icon */
+    align-items: center;
+    justify-content: center;
     width: 100%; 
     padding: 15px; /* Larger for touch (48px+ effective height) */
     margin-bottom: 10px; 
     background: #2a2a2a; /* Dark button base */
     border: none; 
-    color: #ffffff; 
     cursor: pointer; 
     border-radius: 8px; 
     transition: all 0.3s ease; /* Smooth hover/glow */
-    font-size: 1em; 
-    font-weight: bold; 
-    min-height: 48px; /* Touch target min */
-    text-align: left;
+    min-height: 60px; /* Adjusted for icon + padding */
+    text-align: center;
+}
+.nav-btn img { 
+    width: 48px; 
+    height: 48px; 
+    object-fit: contain; /* Preserve aspect ratio */
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); /* Subtle glow on icons */
 }
 .nav-btn:hover { 
     background: #333; 
     box-shadow: 0 0 15px rgba(0, 200, 81, 0.2); /* Green hover glow */
     transform: translateX(2px); /* Subtle shift for sexiness */
 }
+.nav-btn:hover img { 
+    filter: drop-shadow(0 0 10px rgba(0, 200, 81, 0.5)); /* Icon glow on hover */
+}
 .nav-btn.active { 
     background: #00c851; /* Uber green */
     box-shadow: 0 0 20px rgba(144, 238, 144, 0.6); /* Light green glow */
-    color: #000; /* Dark text on green */
-    text-shadow: none;
+}
+.nav-btn.active img { 
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); /* Darken icon on green bg for contrast */
 }
 
 /* Main Content (Fills Remaining Space, No Overflow) */
@@ -149,12 +158,14 @@ strong { font-weight: bold; color: #00ff00; } /* Important text: Bold light gree
 /* Responsive (Tesla 1920x1080 Vertical, Touch-First) */
 @media (max-width: 1920px) and (max-height: 1080px) { /* Cap for screen size */
     .main-content { padding: 15px; }
-    .nav-btn { padding: 12px; font-size: 0.95em; }
+    .nav-btn { padding: 12px; }
+    .nav-btn img { width: 40px; height: 40px; }
 }
 @media (max-width: 768px) { /* Smaller devices */
     .sidebar { width: 200px; }
 }
 @media (orientation: portrait) { 
     .sidebar { width: 35%; max-width: 300px; } 
-    .nav-btn { padding: 20px 15px; } /* Bigger vertical taps */
+    .nav-btn { padding: 20px 15px; min-height: 70px; } /* Bigger vertical taps */
+    .nav-btn img { width: 52px; height: 52px; }
 }
