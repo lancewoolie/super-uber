@@ -12,7 +12,7 @@ async function loadFlights() {
 
         for (const iata of airports) {
             const response = await fetch(
-                `http://api.aviationstack.com/v1/flights?access_key=${AVIATIONSTACK_KEY}&dep_iata=${iata}&limit=5`
+                `https://api.aviationstack.com/v1/flights?access_key=${AVIATIONSTACK_KEY}&dep_iata=${iata}&limit=5`
             );
             const data = await response.json();
             if (data.data) allFlights = allFlights.concat(data.data);
