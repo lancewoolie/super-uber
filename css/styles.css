@@ -35,14 +35,6 @@ strong { font-weight: bold; color: #00ff00; } /* Important text: Bold light gree
     z-index: 10; /* Always on top */
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5); /* Subtle right edge shadow */
 }
-.sidebar h1 { 
-    margin-bottom: 30px; 
-    text-align: center; 
-    font-size: 1.5em; 
-    font-weight: bold; 
-    color: #00c851; /* Green accent for title */
-    text-shadow: 0 0 10px rgba(0, 200, 81, 0.3); /* Soft glow */
-}
 .nav-list { list-style: none; }
 .nav-btn { 
     display: flex; /* Center icon */
@@ -92,6 +84,7 @@ strong { font-weight: bold; color: #00ff00; } /* Important text: Bold light gree
     overflow: hidden; /* No scroll - clip if needed */
     display: flex;
     flex-direction: column;
+    position: relative; /* For absolute logo positioning */
 }
 .mode { 
     display: none; 
@@ -163,20 +156,36 @@ strong { font-weight: bold; color: #00ff00; } /* Important text: Bold light gree
     padding: 0; /* No extra padding to max space */
 }
 
+/* Logo Overlay (Centered Top of Content Area) */
+#logo-overlay {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px; /* Adjust based on your logo size; keeps it compact */
+    height: auto;
+    z-index: 5; /* Above content but below sidebar */
+    pointer-events: none; /* Non-interactive */
+    opacity: 0.9; /* Subtle transparency to blend */
+}
+
 /* Responsive (Tesla 1920x1080 Vertical, Touch-First) */
 @media (max-width: 1920px) and (max-height: 1080px) { /* Cap for screen size */
     .main-content { padding: 15px; }
     .nav-btn { padding: 12px; }
     .nav-btn img { width: 32px; height: 32px; }
+    #logo-overlay { width: 160px; }
 }
 @media (max-width: 768px) { /* Smaller devices */
     .sidebar { width: 200px; }
     .main-content { margin-left: 200px; }
     .nav-btn img { width: 32px; height: 32px; }
+    #logo-overlay { width: 140px; }
 }
 @media (orientation: portrait) { 
     .sidebar { width: 35%; max-width: 300px; } 
     .main-content { margin-left: 35%; }
     .nav-btn { padding: 20px 15px; min-height: 70px; } /* Bigger vertical taps */
     .nav-btn img { width: 40px; height: 40px; }
+    #logo-overlay { width: 120px; top: 5px; }
 }
