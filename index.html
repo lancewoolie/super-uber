@@ -28,7 +28,7 @@
             <!-- Map Mode -->
             <section id="map-mode" class="mode active">
                 <div class="mode-header">
-                    <div class="logo-placeholder"></div> <!-- Aligns with absolute logo -->
+                    <div class="logo-placeholder"></div>
                     <h2>Map Traffic</h2>
                 </div>
                 <div id="map" class="map-container"></div>
@@ -79,6 +79,14 @@
             </section>
         </main>
     </div>
+
+    <!-- Uber Callback Handler (for /callback or query param) -->
+    <script>
+        // Check if callback
+        if (window.location.search.includes('code=')) {
+            handleUberCallback();
+        }
+    </script>
 
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
