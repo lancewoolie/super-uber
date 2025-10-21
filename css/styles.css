@@ -165,6 +165,17 @@ strong { font-weight: bold; color: #00ff00; } /* Important text: Bold light gree
     margin: 2px 0; /* Tighter spacing */
 }
 
+/* Old Flights: Grey Text */
+.old-flight {
+    color: #808080 !important; /* Override white for inactive */
+}
+.old-flight h3 { color: #a0a0a0 !important; } /* Slightly less grey for title */
+.old-flight p { color: #808080 !important; }
+.old-flight a { color: #a0a0a0 !important; } /* Grey links too */
+
+/* ... (rest unchanged) ... */
+}
+
 /* Map Specific (Full Bleed in Mode) */
 .map-container { 
     flex: 1; 
