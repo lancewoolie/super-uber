@@ -66,8 +66,8 @@ async function loadFlights() {
 
             classifiedFlights.slice(0, 10).forEach(flight => { // Top 10
                 const status = flight.flight_status || 'scheduled';
-                // Status colors
-                let statusColor = '#cccccc'; // Default gray
+                // Status colors (default light grey-white)
+                let statusColor = '#f0f0f0'; // Grey-white
                 if (status === 'cancelled') statusColor = '#ff0000'; // Red
                 else if (status.includes('delayed')) statusColor = '#ff6b35'; // Orange
                 else if (status === 'scheduled') statusColor = '#add8e6'; // Light blue
@@ -79,18 +79,17 @@ async function loadFlights() {
                 const arrIata = flight.arrival ? `<span style="color: yellow;">${flight.arrival.iata}</span>` : 'N/A';
                 const flightNum = flight.flight ? `<span style="color: cyan;">${flight.flight.iata}</span>` : 'N/A';
                 const isOld = !flight.isActive;
-                const isTomorrowSpecial = flight.isTomorrow;
-                const cardClass = isOld ? 'flight-card old-flight' : 'flight-card';
-                let badge = '';
-                if (isTomorrowSpecial) badge = '<span style="color: magenta; font-weight: bold;">(Tomorrow\'s First)</span>';
+                const isArriving = flight.arrival?.iata === 'BTR'; // Home arrival
+                const isDeparting = !isArriving; // Default departing
+                const cardClass = isOld ? 'flight-card old-flight' : `flight-card ${isArriving ? 'arriving-flight' : 'departing-flight'}`;
                 const card = document.createElement('div');
                 card.className = cardClass;
                 card.innerHTML = `
-                    <h3>${depIata} ${flightNum} to ${arrIata} ${badge}</h3>
-                    <p><strong>Status:</strong> <span style="color: ${statusColor}; font-weight: bold;">${status}</span></p>
-                    <p><strong>Departure:</strong> <strong>${depTime}</strong></p>
-                    <p><strong>Arrival:</strong> <strong>${arrTime}</strong></p>
-                    <p><strong>Passengers:</strong> ${passengers} | <strong>Airport Dist:</strong> ${flight._distance}mi</p>
+                    <h3>${depIata} to ${arrIata} ${flightNum}</h3>
+                    <p><strong style="color: ${isArriving ? '#ffffff' : '#ffffff'};">${isArriving ? 'Arriving to BTR' : `Departing from ${depIata}`}:</strong> <span style="color: ${statusColor}; font-weight: bold;">${status}</span></p>
+                    <p><strong style="color: ${isArriving ? '#ffffff' : '#ffffff'};">Departure:</strong> <strong style="color: cyan;">${depTime}</strong></p>
+                    <p><strong style="color: ${isArriving ? '#ffffff' : '#ffffff'};">Arrival:</strong> <strong style="color: #00c851;">${arrTime}</strong></p>
+                    <p><strong style="color: orange; font-size: 1.1em;">Passengers:</strong> <span style="color: orange; font-size: 1.1em;">${passengers}</span> | <strong style="color: orange; font-size: 1.1em;">Airport Dist:</strong> <span style="color: orange; font-size: 1.1em;">${flight._distance}mi</span></p>
                     <p style="margin-top: 10px; grid-column: 1 / -1;"><a href="https://www.flightaware.com/live/flight/${flight.flight.iata}${flight.departure ? flight.departure.iata : ''}${flight.arrival ? flight.arrival.iata : ''}" style="color: #00c851;" target="_blank">Track on FlightAware</a></p>
                 `;
                 container.appendChild(card);
