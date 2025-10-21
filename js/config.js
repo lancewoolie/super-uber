@@ -1,4 +1,4 @@
-// Super Uber API Config (Replace with real keys; keep private for now)
+// Super Uber API Config
 const TOMTOM_KEY = '4824d68f-e7ef-4e5c-83ba-d95b5126fbe4';
-
-// Eventbrite will go here next: const EVENTBRITE_TOKEN = 'your_token';
+const EVENTBRITE_TOKEN = 'WKKM4JGM6VOHZ3EYQE'; // Pending; swap later
+const AVIATIONSTACK_KEY = '35ee19955c0c5ad12c6c0b4e34e2a0e6'; // My Aviation Stack Key
