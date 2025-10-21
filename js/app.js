@@ -1,3 +1,5 @@
+// Import config (for modern browsers; fallback if needed)
+const { TOMTOM_KEY } = await import('./config.js'); // Wait, JS modules need type="module" in HTML— we'll add that.
 // Main App Logic: Mode Switching
 document.addEventListener('DOMContentLoaded', () => {
     const btns = document.querySelectorAll('.nav-btn');
