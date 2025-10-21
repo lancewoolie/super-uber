@@ -12,14 +12,17 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add active to clicked
             btn.classList.add('active');
             const modeId = btn.id.replace('-btn', '-mode');
-            document.getElementById(modeId).classList.add('active');
+            const targetMode = document.getElementById(modeId);
+            if (targetMode) {
+                targetMode.classList.add('active');
+            }
 
             // Trigger mode init if needed (e.g., load data)
             if (modeId === 'map-mode') initMap();
-            if (modeId === 'events-mode') loadEvents();
-            if (modeId === 'flights-mode') loadFlights();
-            if (modeId === 'money-mode') loadMoney();
-            if (modeId === 'promos-mode') loadPromos();
+            else if (modeId === 'events-mode') loadEvents();
+            else if (modeId === 'flights-mode') loadFlights();
+            else if (modeId === 'money-mode') loadMoney();
+            else if (modeId === 'promos-mode') loadPromos();
         });
     });
 
