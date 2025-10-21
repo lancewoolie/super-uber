@@ -1,44 +1,71 @@
-// Money Mode: Uber Driver API Integration (Stub + Steps)
-const UBER_ACCESS_TOKEN = 'YOUR_OAUTH_TOKEN_HERE'; // From OAuth flow below
-const UBER_SERVER_TOKEN = 'YOUR_SERVER_TOKEN'; // For server-side calls
+// Money Mode: Uber Driver API Integration (Live with Your Key)
+const UBER_SERVER_TOKEN = 'Qdh65B2Q1rMmpScsl5YkV8jbQaa060rGFllZK0_n'; // Your Super Driver Dashboard secret key
 
-function loadMoney() {
+async function loadMoney() {
     const container = document.getElementById('money-dashboard');
+    container.innerHTML = '<p style="text-align: center; color: #cccccc;">Loading Uber earnings & mileage...</p>'; // Loading spinner
 
-    // TODO: Replace stub with real API calls
-    // STEPS FOR UBER DRIVER API INTEGRATION:
-    // 1. Register app at https://developer.uber.com/ (select "Driver" product) → Get Client ID/Secret.
-    // 2. Request scopes: profile, payment, history (for earnings/mileage/trips). Submit for approval (1-2 weeks; limited access).
-    // 3. OAuth 2.0 Flow (Client Credentials for server, Authorization Code for user):
-    //    - Redirect user: https://login.uber.com/oauth/authorize?client_id=YOUR_ID&response_type=code&redirect_uri=YOUR_URI&scope=profile%20payment%20history
-    //    - Exchange code for token: POST https://login.uber.com/oauth/token (with client_secret, grant_type=authorization_code)
-    //    - Refresh: POST same endpoint with grant_type=refresh_token
-    // 4. Endpoints (use Bearer token in Authorization header):
-    //    - Profile: GET https://api.uber.com/v1/partners/me → Driver info
-    //    - Earnings: GET https://api.uber.com/v1/partners/payments?limit=100 → Weekly totals (sum 'amount' for earnings)
-    //    - Mileage/Trips: GET https://api.uber.com/v1/partners/trips?limit=100&status=completed → Sum 'distance' for mileage
-    //    - Realtime: Webhooks for trip updates (subscribe via /v1/partners/webhooks)
-    // 5. Code Snippet Example (fetch earnings):
-    //    fetch('https://api.uber.com/v1/partners/payments?limit=10', {
-    //      headers: { 'Authorization': `Bearer ${UBER_ACCESS_TOKEN}` }
-    //    }).then(res => res.json()).then(data => { /* Process payments */ });
-    // Limitations: Rate limits (1000/day), no realtime polling (use webhooks), US-only for some data.
+    try {
+        // Fetch payments (earnings)
+        const paymentsRes = await fetch('https://api.uber.com/v1/partners/payments?limit=100', {
+            headers: { 'Authorization': `Bearer ${UBER_SERVER_TOKEN}` }
+        });
+        const paymentsData = await paymentsRes.json();
 
-    // Stub data (simulate API)
-    const earnings = 1250 + Math.floor(Math.random() * 100); // Fake variance
-    const miles = 850 + Math.floor(Math.random() * 50);
-    const progress = Math.min(100, (miles / 1000) * 100);
-    container.innerHTML = `
-        <div class="money-item">
-            <h3>Weekly Earnings (Uber API)</h3>
-            <p><strong>$${earnings.toLocaleString()}</strong> (up ~15% from last week)</p>
-            <p>Total Miles: <strong>${miles}</strong></p>
-        </div>
-        <div class="money-item">
-            <h3>Mileage Tracker</h3>
-            <p>Target: 1,000 miles this week</p>
-            <p>Progress: <strong>${progress.toFixed(0)}%</strong></p>
-        </div>
-    `;
-    console.log('Money dashboard loaded (integrate Uber API per steps above)');
+        // Fetch trips (mileage)
+        const tripsRes = await fetch('https://api.uber.com/v1/partners/trips?limit=100&status=completed', {
+            headers: { 'Authorization': `Bearer ${UBER_SERVER_TOKEN}` }
+        });
+        const tripsData = await tripsRes.json();
+
+        if (paymentsData.payments && tripsData.trips) {
+            // Calculate weekly earnings (last 7 days; adjust date filter if needed)
+            const now = new Date();
+            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const weeklyEarnings = paymentsData.payments
+                .filter(p => new Date(p.created_at) >= weekAgo)
+                .reduce((sum, p) => sum + (parseFloat(p.amount) / 100), 0); // Uber amounts in cents
+
+            // Calculate total mileage (sum distances)
+            const totalMiles = tripsData.trips.reduce((sum, t) => sum + (parseFloat(t.distance || 0)), 0);
+            const progress = Math.min(100, (totalMiles / 1000) * 100); // % toward 1k mile goal
+
+            container.innerHTML = `
+                <div class="money-item">
+                    <h3>Weekly Earnings (Uber)</h3>
+                    <p><strong>$${weeklyEarnings.toFixed(2)}</strong> (from ${paymentsData.payments.length} payments)</p>
+                    <p>Total Trips: <strong>${tripsData.trips.length}</strong></p>
+                </div>
+                <div class="money-item">
+                    <h3>Mileage Tracker</h3>
+                    <p>Total Miles: <strong>${totalMiles.toFixed(1)}</strong></p>
+                    <p>Target: 1,000 miles this week | Progress: <strong>${progress.toFixed(0)}%</strong></p>
+                </div>
+            `;
+            console.log(`Loaded real Uber data: $${weeklyEarnings} earnings, ${totalMiles}mi mileage`);
+        } else {
+            throw new Error('No data returned—check token/approval');
+        }
+    } catch (error) {
+        console.error('Uber API error:', error);
+        // Fallback stub
+        const earnings = 1250 + Math.floor(Math.random() * 100);
+        const miles = 850 + Math.floor(Math.random() * 50);
+        const progress = Math.min(100, (miles / 1000) * 100);
+        container.innerHTML = `
+            <div class="money-item">
+                <h3>Weekly Earnings</h3>
+                <p><strong>$${earnings.toLocaleString()}</strong> (API error—check console)</p>
+                <p>Total Miles: <strong>${miles}</strong></p>
+            </div>
+            <div class="money-item">
+                <h3>Mileage Tracker</h3>
+                <p>Target: 1,000 miles this week</p>
+                <p>Progress: <strong>${progress.toFixed(0)}%</strong></p>
+            </div>
+        `;
+    }
 }
+
+// Poll every 5 mins for updates (optional)
+setInterval(loadMoney, 300000);
