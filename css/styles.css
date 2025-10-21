@@ -165,16 +165,23 @@ strong { font-weight: bold; color: #00ff00; } /* Important text: Bold light gree
     margin: 2px 0; /* Tighter spacing */
 }
 
-/* Old Flights: Grey Text */
+/* Arriving/Departing Styles */
+.arriving-flight {
+    background-color: rgba(144, 238, 144, 0.1); /* Light green bg */
+    color: #90ee90; /* Light green text */
+}
+.departing-flight {
+    background-color: rgba(173, 216, 238, 0.1); /* Light blue bg */
+    color: #add8e6; /* Light blue text */
+}
+
+/* Old Flights: Grey Text (overrides arriving/departing) */
 .old-flight {
     color: #808080 !important; /* Override white for inactive */
 }
 .old-flight h3 { color: #a0a0a0 !important; } /* Slightly less grey for title */
 .old-flight p { color: #808080 !important; }
 .old-flight a { color: #a0a0a0 !important; } /* Grey links too */
-
-/* ... (rest unchanged) ... */
-}
 
 /* Map Specific (Full Bleed in Mode) */
 .map-container { 
