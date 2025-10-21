@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Super Uber</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- Leaflet CSS for maps (we'll add JS later) -->
+    <!-- Leaflet CSS for maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
@@ -24,7 +24,7 @@
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <!-- Map Mode (hidden initially) -->
+            <!-- Map Mode -->
             <section id="map-mode" class="mode active">
                 <div id="map" class="map-container"></div>
             </section>
@@ -33,10 +33,7 @@
             <section id="events-mode" class="mode">
                 <h2>Events in Baton Rouge</h2>
                 <div id="events-list">
-                    <div class="event-card">
-                        <h3>Sample Event</h3>
-                        <p>Loading real events via Eventbrite/Google APIs (Baton Rouge filter). This card style will apply to all.</p>
-                    </div>
+                    <!-- Dynamic cards load here via JS -->
                 </div>
             </section>
 
@@ -44,10 +41,7 @@
             <section id="flights-mode" class="mode">
                 <h2>Flights (75-mile radius)</h2>
                 <div id="flights-list">
-                    <div class="flight-card">
-                        <h3>Sample Flight: BTR to ATL</h3>
-                        <p>Status: On Time | Arr: 14:30 | Passengers: 150. Data for BTR/MSY airports will load here.</p>
-                    </div>
+                    <!-- Dynamic cards load here via JS -->
                 </div>
             </section>
 
@@ -55,10 +49,7 @@
             <section id="money-mode" class="mode">
                 <h2>Earnings & Mileage</h2>
                 <div id="money-dashboard">
-                    <div class="money-item">
-                        <h3>Today's Earnings</h3>
-                        <p>Total: <strong>$45.67</strong> | Mileage: 23.4 mi. Connect Uber or enter data coming.</p>
-                    </div>
+                    <!-- Dynamic dashboard loads here via JS -->
                 </div>
             </section>
 
@@ -66,10 +57,7 @@
             <section id="promos-mode" class="mode">
                 <h2>Promos & Deals</h2>
                 <div id="promos-list">
-                    <div class="promo-card">
-                        <h3>Sample Tesla Deal</h3>
-                        <p>Free Supercharger Miles! Link with referral: <a href="#" style="color: #00c851;">tesla.com/refer/lance</a>. Deals via RSS/Amazon API.</p>
-                    </div>
+                    <!-- Dynamic cards load here via JS -->
                 </div>
             </section>
         </main>
