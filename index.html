@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Uber</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Leaflet CSS for maps (we'll add JS later) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <div class="app">
+        <!-- Left Sidebar Nav -->
+        <nav class="sidebar">
+            <h1>Super Uber</h1>
+            <ul class="nav-list">
+                <li><button id="map-btn" class="nav-btn active">[M] Map Traffic</button></li>
+                <li><button id="events-btn" class="nav-btn">[E] Events</button></li>
+                <li><button id="flights-btn" class="nav-btn">[F] Flights</button></li>
+                <li><button id="money-btn" class="nav-btn">[M] Money</button></li>
+                <li><button id="promos-btn" class="nav-btn">[P] Promos</button></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Map Mode (hidden initially) -->
+            <section id="map-mode" class="mode active">
+                <div id="map" class="map-container"></div>
+            </section>
+
+            <!-- Events Mode -->
+            <section id="events-mode" class="mode">
+                <h2>Events in Baton Rouge</h2>
+                <div id="events-list">Loading events...</div>
+            </section>
+
+            <!-- Flights Mode -->
+            <section id="flights-mode" class="mode">
+                <h2>Flights (75-mile radius)</h2>
+                <div id="flights-list">Loading flights...</div>
+            </section>
+
+            <!-- Money Mode -->
+            <section id="money-mode" class="mode">
+                <h2>Earnings & Mileage</h2>
+                <div id="money-dashboard">Connect Uber or enter data...</div>
+            </section>
+
+            <!-- Promos Mode -->
+            <section id="promos-mode" class="mode">
+                <h2>Promos & Deals</h2>
+                <div id="promos-list">Loading deals...</div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/flights.js"></script>
+    <script src="js/money.js"></script>
+    <script src="js/promos.js"></script>
+</body>
+</html>
