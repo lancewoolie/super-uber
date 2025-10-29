@@ -6,5 +6,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof loadMoney === 'function') loadMoney();
     if (typeof loadPromos === 'function') loadPromos();
     if (window.location.search.includes('code=')) handleUberCallback();
-    console.log('Super Uber V1.1: Sexy Layout Loaded!');
+    console.log('Super Uber V1.1: High-Contrast Sexy Loaded!');
 });
