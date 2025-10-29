@@ -1,3 +1,5 @@
+// flights.js - Updated for Oct 29, 2025 Date + Dashboard Density
+
 // Flights Mode: Fetch from AviationStack (75mi radius of BTR: BTR first, then LFT, MSY)
 const AVIATIONSTACK_KEY = '35ee19955c0c5ad12c6c0b4e34e2a0e6'; // Your real key
 
@@ -15,7 +17,7 @@ async function loadFlights() {
     try {
         const airports = ['BTR', 'LFT', 'MSY']; // BTR first
         let allFlights = [];
-        const now = new Date('2025-10-21'); // Current: Oct 21, 2025
+        const now = new Date('2025-10-29'); // Updated: Oct 29, 2025
         const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000); // Filter threshold
         const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // End of today for "no today" check
 
@@ -47,7 +49,7 @@ async function loadFlights() {
         let tomorrowFlight = null;
         if (classifiedFlights.every(f => !f.isToday)) {
             const tomorrowRes = await fetch(
-                `https://api.aviationstack.com/v1/flights?access_key=${AVIATIONSTACK_KEY}&dep_iata=BTR&departure_date=2025-10-22&flight_status=scheduled&limit=1`
+                `https://api.aviationstack.com/v1/flights?access_key=${AVIATIONSTACK_KEY}&dep_iata=BTR&departure_date=2025-10-30&flight_status=scheduled&limit=1`
             );
             const tomorrowData = await tomorrowRes.json();
             if (tomorrowData.data && tomorrowData.data.length > 0) {
@@ -64,7 +66,7 @@ async function loadFlights() {
                 return a._distance - b._distance;
             });
 
-            classifiedFlights.slice(0, 10).forEach(flight => { // Top 10
+            classifiedFlights.slice(0, 8).forEach(flight => { // Cap to 8 for dashboard density
                 const status = flight.flight_status || 'scheduled';
                 // Status colors (default light grey-white)
                 let statusColor = '#f0f0f0'; // Grey-white
@@ -87,17 +89,17 @@ async function loadFlights() {
                 card.innerHTML = `
                     <h3>${depIata} to ${arrIata} ${flightNum}</h3>
                     <p><strong style="color: ${isArriving ? '#ffffff' : '#ffffff'};">${isArriving ? 'Arriving to BTR' : `Departing from ${depIata}`}:</strong> <span style="color: ${statusColor}; font-weight: bold;">${status}</span></p>
-                    <p><strong style="color: ${isArriving ? '#ffffff' : '#ffffff'};">Departure:</strong> <strong style="color: cyan;">${depTime}</strong></p>
-                    <p><strong style="color: ${isArriving ? '#ffffff' : '#ffffff'};">Arrival:</strong> <strong style="color: #00c851;">${arrTime}</strong></p>
-                    <p><strong style="color: orange; font-size: 1.1em;">Passengers:</strong> <span style="color: orange; font-size: 1.1em;">${passengers}</span> | <strong style="color: orange; font-size: 1.1em;">Airport Dist:</strong> <span style="color: orange; font-size: 1.1em;">${flight._distance}mi</span></p>
-                    <p style="margin-top: 10px; grid-column: 1 / -1;"><a href="https://www.flightaware.com/live/flight/${flight.flight.iata}${flight.departure ? flight.departure.iata : ''}${flight.arrival ? flight.arrival.iata : ''}" style="color: #00c851;" target="_blank">Track on FlightAware</a></p>
+                    <p><strong style="color: ${isArriving ? '#ffffff' : '#ffffff'};">Dep:</strong> <strong style="color: cyan;">${depTime}</strong></p>
+                    <p><strong style="color: ${isArriving ? '#ffffff' : '#ffffff'};">Arr:</strong> <strong style="color: #00c851;">${arrTime}</strong></p>
+                    <p><strong style="color: orange;">Pass:</strong> <span style="color: orange;">${passengers}</span> | <strong style="color: orange;">Dist:</strong> <span style="color: orange;">${flight._distance}mi</span></p>
+                    <p style="margin-top: 5px; grid-column: 1 / -1; font-size: 0.7em;"><a href="https://www.flightaware.com/live/flight/${flight.flight.iata}${flight.departure ? flight.departure.iata : ''}${flight.arrival ? flight.arrival.iata : ''}" style="color: #00c851;" target="_blank">Track</a></p>
                 `;
                 container.appendChild(card);
             });
             console.log(`Loaded ${classifiedFlights.length} flights (active/old/tomorrow)!`);
         } else {
             // Truly no flights: Top center tan message
-            container.innerHTML = '<p style="text-align: center; color: tan; font-size: 1.2em; margin-top: 50px;">No recent flights (last 3hrs)—try peak hours!</p>';
+            container.innerHTML = '<p style="text-align: center; color: tan; font-size: 1em;">No recent flights (last 3hrs)—try peak hours!</p>';
         }
     } catch (error) {
         console.error('AviationStack error:', error);
@@ -105,5 +107,6 @@ async function loadFlights() {
     }
 }
 
-// Auto-load on mode enter (from app.js)
-// TODO: Add arrivals toggle, poll every 5 mins for updates
+// Auto-load on dashboard init (from app.js)
+// Poll every 5 mins for updates
+setInterval(loadFlights, 300000);
