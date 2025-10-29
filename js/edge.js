@@ -1,4 +1,4 @@
-// edge.js - Sample Data (Tall Block Scrolls)
+// edge.js - Unchanged Sample
 async function loadEdge() {
     const container = document.getElementById('edge-tools');
     container.innerHTML = `
