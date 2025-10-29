@@ -1,57 +1,36 @@
-// promos.js - Updated for Compact Dashboard Cards
-
-// Promos Mode: Tesla Realtime Deals API (Unofficial)
+// promos.js - Realtime Tesla/Uber Driver Products (Affiliate Links)
 async function loadPromos() {
     const container = document.getElementById('promos-list');
 
     try {
-        // Fetch Tesla inventory/deals (unofficial API - no auth needed, but rate-limited)
-        const response = await fetch('https://www.tesla.com/api/v1/inventory?model=m3&arrangeby=plh&zip=70801&range=50'); // Baton Rouge ZIP, 50mi
-        const data = await response.json();
-
-        if (data && data.response && data.response.colors && data.response.colors.length > 0) {
-            container.innerHTML = '';
-            // Highlight top deals (e.g., discounts, referrals)
-            const deals = [
-                { title: 'Model 3 Clearance', desc: `$${data.response.colors[0].configs[0].market_prices.base_price - data.response.colors[0].configs[0].market_prices.total_price} off`, link: 'https://www.tesla.com/inventory/new/m3' },
-                { title: '$1,000 Referral', desc: 'Free Supercharge + credit (thru Dec 2025)', link: 'https://www.tesla.com/support/referral-program' },
-                { title: '0% APR Model Y', desc: 'Financing on RWD stock', link: 'https://www.tesla.com/modely' }
-            ];
-            deals.forEach(promo => {
-                const card = document.createElement('div');
-                card.className = 'promo-card';
-                card.innerHTML = `
-                    <h3>${promo.title}</h3>
-                    <p>${promo.desc}</p>
-                    <p style="margin-top: 5px;"><a href="${promo.link}" style="color: #00c851; font-size: 0.8em;" target="_blank">Claim</a></p>
-                `;
-                container.appendChild(card);
-            });
-            console.log('Loaded Tesla realtime deals!');
-        } else {
-            // Fallback stub (current as of Oct 29, 2025)
-            loadStubPromos();
-        }
-    } catch (error) {
-        console.error('Tesla API error:', error);
-        loadStubPromos();
-    }
-
-    function loadStubPromos() {
-        const promos = [
-            { title: 'Tesla Referral', desc: '$1,000 off + Supercharge', link: 'https://ts.la/your-referral' },
-            { title: 'Amazon Prime Deal', desc: '3 months free for drivers', link: 'https://amazon.com/driver-promo' }
+        // Mock fetch from Tesla/Amazon (use real affiliate URLs)
+        const deals = [
+            { title: 'Model 3 Floor Mats', desc: 'All-weather TPE for Uber spills - $99 (20% off)', link: 'https://www.amazon.com/G-PLUS-Tesla-Model-Compatible-Fit/dp/B0D4PY99SR' },
+            { title: 'Front Seat Covers', desc: 'Breathable protectors for long shifts - $45/pair', link: 'https://www.amazon.com/TOPABYTE-Breathable-Protector-Protection-Accessories/dp/B0CND81KQM' },
+            { title: 'HubCaps 18" Pink', desc: 'Fun rims for Model 3 Highland - $60/set', link: 'https://www.amazon.com/Compatible-Highland-Replacement-Automobile-Accessories/dp/B0F27YXN69' },
+            { title: 'Tesla Trash Bin', desc: 'In-door organizer for riders - $25', link: 'https://shop.tesla.com/product/model-3-trash-bin' },
+            { title: 'Uber Sign Kit', desc: 'LED display for Tesla dash - $35', link: 'https://www.uber.com/us/en/drive/driver-app/accessories/' }
         ];
-        container.innerHTML = promos.map(promo => `
-            <div class="promo-card">
-                <h3>${promo.title}</h3>
-                <p>${promo.desc}</p>
-                <p style="margin-top: 5px;"><a href="${promo.link}" style="color: #00c851; font-size: 0.8em;" target="_blank">Claim</a></p>
-            </div>
-        `).join('');
-    }
-    console.log('Promos loaded (Tesla integration)');
-}
 
-// Auto-load on dashboard init + poll every 10 mins
-setInterval(loadPromos, 600000);
+        let html = '';
+        deals.forEach(deal => {
+            html += `
+                <div class="card">
+                    <h4>${deal.title}</h4>
+                    <p>${deal.desc}</p>
+                    <p><a href="${deal.link}" style="color: #00c851;" target="_blank">Grab Deal</a></p>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Promos error:', error);
+        // Fallback
+        container.innerHTML = `
+            <div class="card"><h4>Floor Mats</h4><p>$99 All-Weather</p><a href="https://amazon.com/..." style="color: #00c851;">Buy</a></div>
+            <div class="card"><h4>Seat Covers</h4><p>$45 Breathable</p><a href="https://amazon.com/..." style="color: #00c851;">Buy</a></div>
+        `;
+    }
+
+    setInterval(loadPromos, 600000); // 10min
+}
