@@ -12,5 +12,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // Uber callback
     if (window.location.search.includes('code=')) handleUberCallback();
 
-    console.log('Super Uber V1.1: Sexy Dashboard Loaded!');
+    console.log('Super Uber V1.1: Elon-Boner Layout Loaded!');
 });
