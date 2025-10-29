@@ -1,3 +1,11 @@
+// promos.js - Unchanged, but fits tall block
+async function loadPromos() {
+    const container = document.getElementById('promos-list');
+    // Same as before, scrolls in tall block
+    // ...
+    setInterval(loadPromos, 600000);
+}
+
 // promos.js - Realtime Tesla/Uber Driver Products (Affiliate Links)
 async function loadPromos() {
     const container = document.getElementById('promos-list');
