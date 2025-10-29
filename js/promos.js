@@ -1,4 +1,4 @@
-// promos.js - Unchanged, Compact Top-Right
+// promos.js - Unchanged
 async function loadPromos() {
     const container = document.getElementById('promos-list');
     const deals = [
