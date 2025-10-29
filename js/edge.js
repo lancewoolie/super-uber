@@ -1,50 +1,58 @@
-// edge.js - Repurposed from events.js: Edge Module (Surge Scanner, Predictor, Calc Tools)
-// Rename file to edge.js and update script src in index.html
-
-// Edge Mode: Quick-Hit Competitive Tools (Mocks + Uber API for Surge)
-const UBER_SERVER_TOKEN = 'Qdh65B2Q1rMmpScsl5YkV8jbQaa060rGFllZK0_n'; // For server-side surges
+// edge.js - Combined Edge + Events: Demand Locations & Surges (Uber Clusters + Eventbrite)
+const EVENTBRITE_TOKEN = 'WKKM4JGM6VOHZ3EYQE';
+const UBER_SERVER_TOKEN = 'Qdh65B2Q1rMmpScsl5YkV8jbQaa060rGFllZK0_n';
 
 async function loadEdge() {
     const container = document.getElementById('edge-tools');
-    container.innerHTML = '<p style="text-align: center; color: #cccccc;">Loading Edge Tools...</p>';
+    container.innerHTML = '<p style="text-align: center; color: #cccccc;">Loading Demand...</p>';
 
     try {
-        // Fetch surges (use Uber estimates for mock hotspots)
-        const surgesRes = await fetch('https://api.uber.com/v1/estimates/price?start_latitude=30.4515&start_longitude=-91.1871&end_latitude=30.4100&end_longitude=-91.1800', {
-            headers: { 'Authorization': `Bearer ${UBER_SERVER_TOKEN}` }
+        // Fetch events (e.g., LSU Baseball Oct 29)
+        const eventsRes = await fetch(
+            `https://www.eventbriteapi.com/v3/events/search/?token=${EVENTBRITE_TOKEN}&q=LSU%20Baton%20Rouge&sort_by=date&expand=venue&start_date.range_start=2025-10-29&limit=5`
+        );
+        const eventsData = await eventsRes.json();
+
+        // Mock Uber hotspots with counts (cluster trips for drops/picks)
+        const mockHotspots = [
+            { name: 'Mall of Louisiana', drops: 12, picks: 5, lat: 30.4000, lng: -91.1500 },
+            { name: 'BTR Metro Airport', drops: 3, picks: 23, lat: 30.5333, lng: -91.1500 },
+            { name: 'LSU Tiger Stadium (Baseball vs Samford)', drops: 15, picks: 8, lat: 30.4100, lng: -91.1800, event: true }
+        ];
+
+        let html = '';
+        mockHotspots.forEach(hotspot => {
+            const surge = hotspot.drops + hotspot.picks > 15 ? ' (Surge x1.5)' : '';
+            html += `
+                <div class="card">
+                    <h4>${hotspot.name}${surge}</h4>
+                    <p>Drops: <strong style="color: #00c851;">${hotspot.drops}</strong> | Picks: <strong style="color: #00ff00;">${hotspot.picks}</strong>/hr</p>
+                    ${hotspot.event ? '<p><em>Event: Baseball Exhibition</em></p>' : ''}
+                </div>
+            `;
         });
-        const surgesData = await surgesRes.json();
 
-        // Mock predictor & calc (expand with your trip data later)
-        const mockSurge = surgesData.prices ? surgesData.prices[0].surge_multiplier || 1.0 : 1.2;
-        const mockPredictor = 'Friday flights: +30% airport runs - Position now';
-        const mockCalc = '3 hrs @ 1.2x = $120 projected (pure profit)';
+        // Add sub-locations for surges
+        if (eventsData.events && eventsData.events.length > 0) {
+            html += `
+                <div class="card">
+                    <h4>${eventsData.events[0].name.text} Subs</h4>
+                    <p>Tiger Drive: 10 picks | Chimes St: 7 drops | Reggies: 5 surges</p>
+                </div>
+            `;
+        }
 
-        container.innerHTML = `
-            <div class="event-card">
-                <h3>Surge Scanner (20mi Radius)</h3>
-                <p><strong>Top Surge:</strong> Downtown BR at <strong style="color: #00ff00;">${mockSurge}x</strong> - Drive time: 8 mins</p>
-            </div>
-            <div class="event-card">
-                <h3>Rider Flow Predictor</h3>
-                <p>${mockPredictor}</p>
-            </div>
-            <div class="event-card">
-                <h3>Quick Calc Tools</h3>
-                <p>${mockCalc}</p>
-            </div>
-        `;
-        console.log('Loaded Edge tools with mock surges!');
+        container.innerHTML = html;
+        console.log('Loaded Edge demand & events');
     } catch (error) {
-        console.error('Edge load error:', error);
-        // Fallback stubs
+        console.error('Edge error:', error);
+        // Fallback
         container.innerHTML = `
-            <div class="event-card"><h3>Surge Scanner</h3><p>Downtown BR 1.2x - 8 min drive (mock)</p></div>
-            <div class="event-card"><h3>Rider Predictor</h3><p>Friday flights = +30% (mock)</p></div>
-            <div class="event-card"><h3>Break-Even</h3><p>Pure profit mode active (mock)</p></div>
+            <div class="card"><h4>Mall of LA</h4><p>12 drops, 5 picks</p></div>
+            <div class="card"><h4>BTR Airport</h4><p>3 drops, 23 picks</p></div>
+            <div class="card"><h4>LSU Baseball</h4><p>15 drops (Surge x1.5)</p></div>
         `;
     }
 
-    // Poll every 5 mins for live surges
-    setInterval(loadEdge, 300000);
+    setInterval(loadEdge, 300000); // 5min poll
 }
