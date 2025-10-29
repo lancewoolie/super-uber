@@ -1,3 +1,5 @@
+// map.js - Updated for Oct 29, 2025 + Decorative Overlay Mode
+
 let map; // Global map instance
 let trafficLayer; // For flow tiles
 let crimeLayer; // For NO GO clouds
@@ -118,8 +120,8 @@ async function initMap() {
 
     async function loadNoGoZones() {
         try {
-            // Fetch violent crimes past year from Open Data BR API
-            const crimeRes = await fetch('https://data.brla.gov/resource/6zc2-imdr.json?$where=offense_category in (\'Homicide\',\'Aggravated Assault\',\'Robbery\') AND incident_datetime between \'2024-10-21\' and \'2025-10-21\'&$select=latitude,longitude,offense_category&$limit=5000');
+            // Fetch violent crimes past year from Open Data BR API - Updated dates
+            const crimeRes = await fetch('https://data.brla.gov/resource/6zc2-imdr.json?$where=offense_category in (\'Homicide\',\'Aggravated Assault\',\'Robbery\') AND incident_datetime between \'2024-10-29\' and \'2025-10-29\'&$select=latitude,longitude,offense_category&$limit=5000');
             const crimes = await crimeRes.json();
 
             // Clear old
@@ -201,5 +203,5 @@ async function initMap() {
         }
     }
 
-    // TODO: Animate clouds (e.g., CSS pulse on hotspots)
+    // TODO: Animate clouds (e.g., CSS pulse on hotspots) - Low priority for decorative mode
 }
