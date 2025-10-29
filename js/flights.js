@@ -1,112 +1,86 @@
-// flights.js - Updated for Oct 29, 2025 Date + Dashboard Density
-
-// Flights Mode: Fetch from AviationStack (75mi radius of BTR: BTR first, then LFT, MSY)
-const AVIATIONSTACK_KEY = '35ee19955c0c5ad12c6c0b4e34e2a0e6'; // Your real key
-
-// Airport distances from BTR (miles) for sorting priority
-const AIRPORT_DISTANCES = {
-    'BTR': 0,   // Baton Rouge (prioritized as 0)
-    'LFT': 51,  // Lafayette
-    'MSY': 70   // New Orleans
-};
+// flights.js - Fixed: Past 24h + Future 24h, Colors by Time/Type
+const AVIATIONSTACK_KEY = '35ee19955c0c5ad12c6c0b4e34e2a0e6';
 
 async function loadFlights() {
     const container = document.getElementById('flights-list');
-    container.innerHTML = '<p style="text-align: center; color: #cccccc;">Loading flights (BTR + 75mi radius)...</p>';
+    container.innerHTML = '<p style="text-align: center; color: #cccccc;">Loading Flights ±24h...</p>';
 
     try {
-        const airports = ['BTR', 'LFT', 'MSY']; // BTR first
+        const now = new Date('2025-10-29T12:00:00'); // Midday for demo
+        const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        const dayLater = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+        const airports = ['BTR', 'LFT', 'MSY'];
+
         let allFlights = [];
-        const now = new Date('2025-10-29'); // Updated: Oct 29, 2025
-        const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000); // Filter threshold
-        const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // End of today for "no today" check
 
-        // Fetch recent departures from each (limit 10/airport for broader pool)
-        for (const iata of airports) {
-            const response = await fetch(
-                `https://api.aviationstack.com/v1/flights?access_key=${AVIATIONSTACK_KEY}&dep_iata=${iata}&limit=10`
-            );
-            const data = await response.json();
-            if (data.data) {
-                // Add metadata
-                data.data.forEach(flight => {
-                    flight._distance = AIRPORT_DISTANCES[iata] || 999;
-                    flight._depTime = new Date(flight.departure?.scheduled || 0);
-                });
-                allFlights = allFlights.concat(data.data);
+        // Past 24h: Historical via /flights with flight_date
+        const pastDates = ['2025-10-28', '2025-10-29']; // Last 2 days for coverage
+        for (const date of pastDates) {
+            for (const iata of airports) {
+                // Arrivals
+                const arrRes = await fetch(
+                    `https://api.aviationstack.com/v1/flights?access_key=${AVIATIONSTACK_KEY}&arr_iata=${iata}&flight_date=${date}&limit=5`
+                );
+                const arrData = await arrRes.json();
+                if (arrData.data) allFlights = allFlights.concat(arrData.data.map(f => ({...f, type: 'arrival', airport: iata})));
+
+                // Departures
+                const depRes = await fetch(
+                    `https://api.aviationstack.com/v1/flights?access_key=${AVIATIONSTACK_KEY}&dep_iata=${iata}&flight_date=${date}&limit=5`
+                );
+                const depData = await depRes.json();
+                if (depData.data) allFlights = allFlights.concat(depData.data.map(f => ({...f, type: 'departure', airport: iata})));
             }
         }
 
-        // Filter & classify: All flights, but tag old/active
-        const classifiedFlights = allFlights.map(flight => ({
-            ...flight,
-            isActive: flight._depTime >= threeHoursAgo,
-            isToday: flight._depTime < todayEnd,
-            isTomorrow: !flight.isToday && flight._depTime.getDate() === now.getDate() + 1 // First tomorrow
-        }));
-
-        // If no today flights, fetch first tomorrow (BTR priority)
-        let tomorrowFlight = null;
-        if (classifiedFlights.every(f => !f.isToday)) {
-            const tomorrowRes = await fetch(
-                `https://api.aviationstack.com/v1/flights?access_key=${AVIATIONSTACK_KEY}&dep_iata=BTR&departure_date=2025-10-30&flight_status=scheduled&limit=1`
+        // Future 24h: Scheduled via /flightsFuture
+        const futureDates = ['2025-10-29', '2025-10-30'];
+        for (const date of futureDates) {
+            // Arrivals BTR focus
+            const futureArrRes = await fetch(
+                `https://api.aviationstack.com/v1/flightsFuture?access_key=${AVIATIONSTACK_KEY}&iataCode=BTR&type=arrival&date=${date}&limit=5`
             );
-            const tomorrowData = await tomorrowRes.json();
-            if (tomorrowData.data && tomorrowData.data.length > 0) {
-                tomorrowFlight = { ...tomorrowData.data[0], _distance: 0, _depTime: new Date(tomorrowData.data[0].departure?.scheduled || 0), isTomorrow: true };
-                classifiedFlights.unshift(tomorrowFlight); // Prepend as first
-            }
+            const futureArrData = await futureArrRes.json();
+            if (futureArrData.data) allFlights = allFlights.concat(futureArrData.data.map(f => ({...f, type: 'arrival', airport: 'BTR'})));
+
+            // Departures BTR
+            const futureDepRes = await fetch(
+                `https://api.aviationstack.com/v1/flightsFuture?access_key=${AVIATIONSTACK_KEY}&iataCode=BTR&type=departure&date=${date}&limit=5`
+            );
+            const futureDepData = await futureDepRes.json();
+            if (futureDepData.data) allFlights = allFlights.concat(futureDepData.data.map(f => ({...f, type: 'departure', airport: 'BTR'})));
         }
 
-        if (classifiedFlights.length > 0) {
-            container.innerHTML = '';
-            // Sort: Desc by dep time (newest first), then asc by distance (BTR first)
-            classifiedFlights.sort((a, b) => {
-                if (b._depTime.getTime() !== a._depTime.getTime()) return b._depTime.getTime() - a._depTime.getTime();
-                return a._distance - b._distance;
+        if (allFlights.length > 0) {
+            // Sort by scheduled time desc
+            allFlights.forEach(f => {
+                f._schedTime = new Date(f.departure?.scheduled || f.arrival?.scheduled || now);
+                f._isOld = f._schedTime < new Date(now.getTime() - 60 * 60 * 1000); // >1h old
             });
+            allFlights.sort((a, b) => b._schedTime - a._schedTime);
 
-            classifiedFlights.slice(0, 8).forEach(flight => { // Cap to 8 for dashboard density
+            let html = '';
+            allFlights.slice(0, 10).forEach(flight => {
                 const status = flight.flight_status || 'scheduled';
-                // Status colors (default light grey-white)
-                let statusColor = '#f0f0f0'; // Grey-white
-                if (status === 'cancelled') statusColor = '#ff0000'; // Red
-                else if (status.includes('delayed')) statusColor = '#ff6b35'; // Orange
-                else if (status === 'scheduled') statusColor = '#add8e6'; // Light blue
-                else if (status === 'landed' && flight._depTime >= new Date(now.getTime() - 60 * 60 * 1000)) statusColor = '#00ff00'; // Neon green for recent land
-                const passengers = flight.aircraft ? (flight.aircraft.capacity || '150') : 'Est. 150';
-                const depTime = flight.departure ? new Date(flight.departure.scheduled).toLocaleString() : 'TBD';
-                const arrTime = flight.arrival ? new Date(flight.arrival.scheduled).toLocaleString() : 'TBD';
-                const depIata = flight.departure ? `<span style="color: yellow;">${flight.departure.iata}</span>` : 'N/A';
-                const arrIata = flight.arrival ? `<span style="color: yellow;">${flight.arrival.iata}</span>` : 'N/A';
-                const flightNum = flight.flight ? `<span style="color: cyan;">${flight.flight.iata}</span>` : 'N/A';
-                const isOld = !flight.isActive;
-                const isArriving = flight.arrival?.iata === 'BTR'; // Home arrival
-                const isDeparting = !isArriving; // Default departing
-                const cardClass = isOld ? 'flight-card old-flight' : `flight-card ${isArriving ? 'arriving-flight' : 'departing-flight'}`;
-                const card = document.createElement('div');
-                card.className = cardClass;
-                card.innerHTML = `
-                    <h3>${depIata} to ${arrIata} ${flightNum}</h3>
-                    <p><strong style="color: ${isArriving ? '#ffffff' : '#ffffff'};">${isArriving ? 'Arriving to BTR' : `Departing from ${depIata}`}:</strong> <span style="color: ${statusColor}; font-weight: bold;">${status}</span></p>
-                    <p><strong style="color: ${isArriving ? '#ffffff' : '#ffffff'};">Dep:</strong> <strong style="color: cyan;">${depTime}</strong></p>
-                    <p><strong style="color: ${isArriving ? '#ffffff' : '#ffffff'};">Arr:</strong> <strong style="color: #00c851;">${arrTime}</strong></p>
-                    <p><strong style="color: orange;">Pass:</strong> <span style="color: orange;">${passengers}</span> | <strong style="color: orange;">Dist:</strong> <span style="color: orange;">${flight._distance}mi</span></p>
-                    <p style="margin-top: 5px; grid-column: 1 / -1; font-size: 0.7em;"><a href="https://www.flightaware.com/live/flight/${flight.flight.iata}${flight.departure ? flight.departure.iata : ''}${flight.arrival ? flight.arrival.iata : ''}" style="color: #00c851;" target="_blank">Track</a></p>
+                const timeStr = flight._schedTime.toLocaleString();
+                const className = flight._isOld ? 'flight-old' : flight.type === 'arrival' ? 'flight-arrival' : 'flight-departure';
+                const icon = flight.type === 'arrival' ? '→' : '←';
+                html += `
+                    <div class="card ${className}">
+                        <h4>${flight.flight?.iata} ${icon} ${flight.airline?.name || ''} (${flight.airport})</h4>
+                        <p><strong>${status.toUpperCase()}:</strong> ${timeStr}</p>
+                        <p>From/To: ${flight.departure?.iata || ''} - ${flight.arrival?.iata || ''}</p>
+                    </div>
                 `;
-                container.appendChild(card);
             });
-            console.log(`Loaded ${classifiedFlights.length} flights (active/old/tomorrow)!`);
+            container.innerHTML = html;
         } else {
-            // Truly no flights: Top center tan message
-            container.innerHTML = '<p style="text-align: center; color: tan; font-size: 1em;">No recent flights (last 3hrs)—try peak hours!</p>';
+            container.innerHTML = '<p style="text-align: center; color: tan;">No flights ±24h—quiet skies!</p>';
         }
     } catch (error) {
-        console.error('AviationStack error:', error);
-        container.innerHTML = '<div class="flight-card"><p>Error loading flights—check console (key valid?).</p></div>';
+        console.error('Flights error:', error);
+        container.innerHTML = '<div class="card"><p>Error loading—API limits? Check console.</p></div>';
     }
-}
 
-// Auto-load on dashboard init (from app.js)
-// Poll every 5 mins for updates
-setInterval(loadFlights, 300000);
+    setInterval(loadFlights, 300000); // 5min
+}
