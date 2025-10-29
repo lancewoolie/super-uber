@@ -1,4 +1,4 @@
-// money.js - Sample Data: $234.52 Haul, $29 Tips, 29% Acc (Red), 7% Cancel (Orange)
+// money.js - Unchanged Sample
 async function loadMoney() {
     const container = document.getElementById('earnings-dashboard');
     container.innerHTML = `
@@ -9,12 +9,12 @@ async function loadMoney() {
         </div>
         <div class="card">
             <h4>Last 5 Trips</h4>
-            <p>Mall to BTR | $45 | Tip $8</p>
-            <p>LSU to Downtown | $22 | Tip $3</p>
-            <p>Airport Run | $38 | Tip $5</p>
-            <p>Perkins Rd | $18 | Tip $2</p>
-            <p>Evening Surge | $52 | Tip $11</p>
-            <p>Total Mileage: <strong>156mi</strong></p>
+            <p>Mall to BTR | $45 | Tip $8 | 12mi</p>
+            <p>LSU to Downtown | $22 | Tip $3 | 5mi</p>
+            <p>Airport Run | $38 | Tip $5 | 15mi</p>
+            <p>Perkins Rd | $18 | Tip $2 | 4mi</p>
+            <p>Evening Surge | $52 | Tip $11 | 18mi</p>
+            <p>Total Mileage: <strong>54mi</strong></p>
         </div>
         <div class="card">
             <h4>Live Stats</h4>
@@ -25,8 +25,6 @@ async function loadMoney() {
     console.log('Loaded Money sample');
     setInterval(loadMoney, 300000);
 }
-
-// connectUber, etc. unchanged
-function connectUber() { /* ... */ }
-function handleUberCallback() { /* ... */ }
-function disconnectUber() { /* ... */ }
+function connectUber() { /* unchanged */ }
+function handleUberCallback() { /* unchanged */ }
+function disconnectUber() { /* unchanged */ }
