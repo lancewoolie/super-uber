@@ -1,20 +1,21 @@
+// money.js - Updated for Earnings Module (#earnings-dashboard) + Compact Cards
+
 // Money Mode: Uber Driver API Integration (with OAuth Connect Button)
 const UBER_CLIENT_ID = 'YOUR_CLIENT_ID_FROM_DEV_DASHBOARD'; // Replace with your app's Client ID
 const UBER_REDIRECT_URI = 'https://your-superuber-site.com/callback'; // Or http://localhost:3000/callback for testing
 const UBER_SERVER_TOKEN = 'Qdh65B2Q1rMmpScsl5YkV8jbQaa060rGFllZK0_n'; // Fallback server token (not personal)
 
 async function loadMoney() {
-    const container = document.getElementById('money-dashboard');
+    const container = document.getElementById('earnings-dashboard');
     const storedToken = localStorage.getItem('uber_access_token'); // Check for user token
 
     if (!storedToken) {
-        // No connection: Show connect button
+        // No connection: Show compact connect card
         container.innerHTML = `
             <div class="money-item" style="text-align: center;">
-                <h3>Connect Uber Driver Account</h3>
-                <p>To pull your personal earnings & mileage, grant access below. (Secure; token stored locally.)</p>
-                <button onclick="connectUber()" style="background: #00c851; color: #000; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Connect Uber</button>
-                <p style="font-size: 0.8em; color: #cccccc; margin-top: 10px;">Steps: 1. Click Connect → Log in to Uber. 2. Approve scopes (profile, history, payment). 3. Redirect saves token.</p>
+                <h3>Connect Uber</h3>
+                <p>Grant access for earnings & mileage.</p>
+                <button onclick="connectUber()" style="background: #00c851; color: #000; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.9em;">Connect</button>
             </div>
         `;
         console.log('No Uber token—show connect button');
@@ -22,7 +23,7 @@ async function loadMoney() {
     }
 
     // Has token: Fetch real data
-    container.innerHTML = '<p style="text-align: center; color: #cccccc;">Loading your Uber data...</p>';
+    container.innerHTML = '<p style="text-align: center; color: #cccccc;">Loading Uber data...</p>';
 
     try {
         // Fetch payments (earnings)
@@ -51,16 +52,16 @@ async function loadMoney() {
 
             container.innerHTML = `
                 <div class="money-item">
-                    <h3>Your Weekly Earnings (Uber)</h3>
-                    <p><strong>$${weeklyEarnings.toFixed(2)}</strong> (from ${paymentsData.payments.length} payments)</p>
-                    <p>Total Trips: <strong>${tripsData.trips.length}</strong></p>
+                    <h3>Weekly Earnings</h3>
+                    <p><strong>$${weeklyEarnings.toFixed(2)}</strong> (${paymentsData.payments.length} payments)</p>
+                    <p>Trips: <strong>${tripsData.trips.length}</strong></p>
                 </div>
                 <div class="money-item">
-                    <h3>Your Mileage Tracker</h3>
-                    <p>Total Miles: <strong>${totalMiles.toFixed(1)}</strong></p>
-                    <p>Target: 1,000 miles this week | Progress: <strong>${progress.toFixed(0)}%</strong></p>
+                    <h3>Mileage Tracker</h3>
+                    <p>Miles: <strong>${totalMiles.toFixed(1)}</strong></p>
+                    <p>Progress: <strong>${progress.toFixed(0)}%</strong> (Target: 1k)</p>
                 </div>
-                <button onclick="disconnectUber()" style="background: #ff6b35; color: #fff; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">Disconnect</button>
+                <button onclick="disconnectUber()" style="background: #ff6b35; color: #fff; padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.8em;">Disconnect</button>
             `;
             console.log(`Loaded your Uber data: $${weeklyEarnings} earnings, ${totalMiles}mi mileage`);
         } else {
@@ -71,7 +72,7 @@ async function loadMoney() {
         container.innerHTML = `
             <div class="money-item">
                 <h3>Connection Issue</h3>
-                <p>Error loading data (token expired?). <button onclick="connectUber()" style="background: #00c851; color: #000; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer;">Reconnect Uber</button></p>
+                <p>Error (token expired?). <button onclick="connectUber()" style="background: #00c851; color: #000; padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.8em;">Reconnect</button></p>
             </div>
         `;
     }
