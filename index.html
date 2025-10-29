@@ -2,79 +2,86 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Uber</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Super Uber Alpha V1.1</title>
     <link rel="stylesheet" href="css/styles.css">
     <!-- Leaflet CSS for maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src='https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js'></script>
+    <!-- Target Tesla Model 3 browser resolution: Design for ~1920x1080 full, but fixed no-scroll layout optimized for minimized window (~960x540 effective viewport) -->
+    <style>
+        /* Quick inline styles for dashboard feel - expand in styles.css */
+        body { margin: 0; padding: 0; overflow: hidden; height: 100vh; font-family: Arial, sans-serif; background-color: #000; color: #fff; }
+        .app { position: relative; height: 100vh; }
+        .dashboard { display: grid; grid-template-rows: repeat(5, 1fr); height: 100vh; gap: 0; }
+        .module { position: relative; border-bottom: 1px solid #333; overflow: hidden; }
+        .module:last-child { border-bottom: none; }
+        .section-icon { position: absolute; top: 5px; left: 5px; width: 24px; height: 24px; z-index: 10; opacity: 0.8; }
+        .module h3 { position: absolute; top: 5px; right: 5px; margin: 0; font-size: 14px; z-index: 10; }
+        .map-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.3; z-index: 1; } /* Decorative overlay */
+        .content-placeholder { padding: 10px; font-size: 12px; opacity: 0.7; }
+        #logo-overlay { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 80px; z-index: 100; opacity: 0.9; }
+    </style>
 </head>
 <body>
     <div class="app">
-        <!-- Left Sidebar Nav -->
-        <nav class="sidebar">
-            <ul class="nav-list">
-                <li><button id="map-btn" class="nav-btn active" title="Map Traffic"><img src="img/icons/maps.png" alt="Map Traffic"></button></li>
-                <li><button id="events-btn" class="nav-btn" title="Events"><img src="img/icons/events.png" alt="Events"></button></li>
-                <li><button id="flights-btn" class="nav-btn" title="Flights"><img src="img/icons/flights.png" alt="Flights"></button></li>
-                <li><button id="money-btn" class="nav-btn" title="Money"><img src="img/icons/money.png" alt="Money"></button></li>
-                <li><button id="promos-btn" class="nav-btn" title="Promos"><img src="img/icons/promos.png" alt="Promos"></button></li>
-            </ul>
-        </nav>
+        <img id="logo-overlay" src="img/icons/logo.png" alt="Super Uber Logo">
 
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <img id="logo-overlay" src="img/icons/logo.png" alt="Super Uber Logo">
-            <!-- Map Mode -->
-            <section id="map-mode" class="mode active">
-                <div class="mode-header">
-                    <div class="logo-placeholder"></div>
-                    <h2>Map Traffic</h2>
-                </div>
+        <!-- Dashboard: Fixed single-page layout, no scrolling, 5 equal-height modules -->
+        <main class="dashboard">
+            <!-- Map Module: Background decorative map overlay -->
+            <section class="module" id="map-module">
+                <button class="section-icon" title="Map"><img src="img/icons/maps.png" alt="Map" style="width:100%; height:100%;"></button>
+                <h3>Map: Hotspots & Routes</h3>
                 <div id="map" class="map-container"></div>
-            </section>
-
-            <!-- Events Mode -->
-            <section id="events-mode" class="mode">
-                <div class="mode-header">
-                    <div class="logo-placeholder"></div>
-                    <h2>Events in Baton Rouge</h2>
-                </div>
-                <div id="events-list">
-                    <!-- Dynamic cards load here via JS -->
+                <div class="content-placeholder">
+                    <div>Hotspot Heatmaps: [Placeholder - Color-coded demand zones from Uber API]</div>
+                    <div>No-Go Zones: [Placeholder - Risk alerts & dead zones]</div>
+                    <div>Optimal Routes: [Placeholder - Earnings-optimized paths]</div>
                 </div>
             </section>
 
-            <!-- Flights Mode -->
-            <section id="flights-mode" class="mode">
-                <div class="mode-header">
-                    <div class="logo-placeholder"></div>
-                    <h2>Flights (75-mile radius)</h2>
-                </div>
-                <div id="flights-list">
-                    <!-- Dynamic cards load here via JS -->
-                </div>
-            </section>
-
-            <!-- Money Mode -->
-            <section id="money-mode" class="mode">
-                <div class="mode-header">
-                    <div class="logo-placeholder"></div>
-                    <h2>Earnings & Mileage</h2>
-                </div>
-                <div id="money-dashboard">
-                    <!-- Dynamic dashboard loads here via JS -->
+            <!-- Earnings ($) Module -->
+            <section class="module" id="earnings-module">
+                <button class="section-icon" title="$"><img src="img/icons/money.png" alt="Earnings"></button>
+                <h3>$: Earnings Hub</h3>
+                <div id="earnings-dashboard" class="content-placeholder">
+                    <div>Today's Haul: [Dynamic P&L - $245 (+15% vs avg)]</div>
+                    <div>Next Goal: [Voice: "How's my surge?"]</div>
+                    <div>Quick Calc: [3 hrs = $120 projected]</div>
                 </div>
             </section>
 
-            <!-- Promos Mode -->
-            <section id="promos-mode" class="mode">
-                <div class="mode-header">
-                    <div class="logo-placeholder"></div>
-                    <h2>Promos & Deals</h2>
+            <!-- Flights Module -->
+            <section class="module" id="flights-module">
+                <button class="section-icon" title="Flights"><img src="img/icons/flights.png" alt="Flights"></button>
+                <h3>Flights: Airport Intel</h3>
+                <div id="flights-list" class="content-placeholder">
+                    <div>BTR Arrivals: [Placeholder - Delta 1547 lands in 20 mins]</div>
+                    <div>MSY Surges: [Map pins for prime pickups]</div>
+                    <div>Filter: [LA flights for targeted runs]</div>
                 </div>
-                <div id="promos-list">
-                    <!-- Dynamic cards load here via JS -->
+            </section>
+
+            <!-- Promos Module -->
+            <section class="module" id="promos-module">
+                <button class="section-icon" title="Promos"><img src="img/icons/promos.png" alt="Promos"></button>
+                <h3>Promos: Deals & Perks</h3>
+                <div id="promos-list" class="content-placeholder">
+                    <div>Uber Bonus: [$50 for 5 airport runs]</div>
+                    <div>Driver Perks: [Free coffee @ Mall Starbucks]</div>
+                    <div>Affiliates: [Music drops & merch links]</div>
+                </div>
+            </section>
+
+            <!-- Edge Module (Repurposed from Events) -->
+            <section class="module" id="edge-module">
+                <button class="section-icon" title="Edge"><img src="img/icons/events.png" alt="Edge"></button>
+                <h3>Edge: Competitive Tools</h3>
+                <div id="edge-tools" class="content-placeholder">
+                    <div>Surge Scanner: [Top: Downtown BR 1.2x - 8 min drive]</div>
+                    <div>Rider Predictor: [Friday flights = +30% airport runs]</div>
+                    <div>Break-Even Analyzer: [Pure profit mode active]</div>
                 </div>
             </section>
         </main>
@@ -88,13 +95,25 @@
         }
     </script>
 
-    <!-- Scripts -->
+    <!-- Scripts: Load all modules on init, no mode switching -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="js/app.js"></script>
     <script src="js/map.js"></script>
-    <script src="js/events.js"></script>
+    <!-- Repurpose events.js for edge functionality -->
+    <script src="js/events.js"></script> <!-- Update to edge.js later -->
     <script src="js/flights.js"></script>
     <script src="js/money.js"></script>
     <script src="js/promos.js"></script>
+    <script>
+        // Quick init for dashboard - expand in app.js
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize all modules simultaneously
+            if (typeof initMap === 'function') initMap();
+            if (typeof initEvents === 'function') initEvents(); // For Edge
+            if (typeof initFlights === 'function') initFlights();
+            if (typeof initMoney === 'function') initMoney();
+            if (typeof initPromos === 'function') initPromos();
+        });
+    </script>
 </body>
 </html>
