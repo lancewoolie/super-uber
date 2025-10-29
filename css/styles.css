@@ -1,15 +1,15 @@
-/* Reset & Base (Sexy Dashboard: Light Green BG, Legible Fonts, 2-Col Flights) */
+/* Reset & Base (Sexy Dashboard: High-Contrast Text on Light Green) */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     background: #0a0a0a; 
-    color: #333; /* Dark, legible base */
+    color: #111; /* Near-black for max legibility */
     height: 100vh; 
     width: 100vw; 
     overflow: hidden; 
     touch-action: manipulation; 
 }
-strong { font-weight: bold; color: #006400; /* Dark green accents */ }
+strong { font-weight: bold; color: #006400; /* Dark green accents, high contrast */ }
 
 /* App Layout (Full-Screen Map BG + Absolute Blocks) */
 .app { 
@@ -34,7 +34,7 @@ strong { font-weight: bold; color: #006400; /* Dark green accents */ }
 /* Blocks: Light Green BG, Rounded, Sexy Glow */
 .block { 
     position: absolute; 
-    background: linear-gradient(145deg, rgba(0, 200, 81, 0.1), rgba(0, 255, 0, 0.05)); /* Light green return */
+    background: linear-gradient(145deg, rgba(0, 200, 81, 0.15), rgba(0, 255, 0, 0.08)); /* Slightly stronger tint for definition */
     backdrop-filter: blur(10px); 
     border: 2px solid #00c851; /* Thick green border */
     border-radius: 24px; 
@@ -78,15 +78,15 @@ strong { font-weight: bold; color: #006400; /* Dark green accents */ }
 }
 .section-icon img { width: 100%; height: 100%; object-fit: contain; }
 
-/* Headers & Content: Legible Spacing */
+/* Headers & Content: High-Contrast Legibility */
 .block h3 { 
     position: absolute; 
     top: 15px; 
     right: 15px; 
     margin: 0; 
     font-size: 18px; 
-    color: #00c851; /* Green title */
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); 
+    color: #00c851; /* Vibrant green title, pops on light BG */
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
     z-index: 11; 
 }
 .block-content { 
@@ -97,44 +97,44 @@ strong { font-weight: bold; color: #006400; /* Dark green accents */ }
     bottom: 15px; 
     overflow-y: auto; 
     font-size: 13px; 
-    color: #333; /* Legible dark */
+    color: #111; /* Black for ultimate readability */
     line-height: 1.5; 
     padding-right: 5px; 
 }
 
-/* Cards: Subtle Green Tint */
+/* Cards: Subtle Green Tint, Dark Text */
 .block-content .card { 
-    background: rgba(0, 200, 81, 0.05); 
-    border: 1px solid rgba(0, 200, 81, 0.2); 
+    background: rgba(0, 200, 81, 0.08); /* Even lighter tint */
+    border: 1px solid rgba(0, 200, 81, 0.3); /* Softer border */
     border-radius: 12px; 
     padding: 10px; 
     margin-bottom: 10px; 
     transition: all 0.3s ease; 
 }
 .block-content .card:hover { 
-    background: rgba(0, 200, 81, 0.1); 
+    background: rgba(0, 200, 81, 0.15); 
     border-color: #00c851; 
 }
 .block-content h4 { 
     font-size: 14px; 
-    color: #006400; /* Dark green headers */
+    color: #006400; /* Dark green headers, high contrast */
     margin-bottom: 5px; 
 }
 .block-content p { 
     margin: 3px 0; 
     font-size: 12px; 
-    color: #555; /* Softer dark for body */
+    color: #111; /* Black body text */
 }
 
-/* Stats Colors */
-.acceptance-high { color: #00ff00; }
+/* Stats Colors: High Contrast */
+.acceptance-high { color: #00ff00; } /* Bright green */
 .acceptance-med { color: #ffcc00; }
 .acceptance-low { color: #ff0000; }
 .cancellation-low { color: #00ff00; }
 .cancellation-med { color: #ffcc00; }
 .cancellation-high { color: #ff0000; }
 
-/* Flights: 2-Col Grid, Custom Colors */
+/* Flights: 2-Col Grid, Custom High-Contrast Colors */
 .airports-block .block-content {
     display: grid;
     grid-template-columns: 1fr 1fr; /* 2 columns: Arrivals | Departures */
@@ -150,10 +150,10 @@ strong { font-weight: bold; color: #006400; /* Dark green accents */ }
     color: #00c851;
     margin-bottom: 10px;
 }
-.flight-old { color: #808080 !important; background: rgba(128, 128, 128, 0.1) !important; }
-.flight-arrival { color: #006400 !important; background: rgba(0, 100, 0, 0.1) !important; } /* Dark green */
-.flight-departure { color: #8B0000 !important; background: rgba(139, 0, 0, 0.1) !important; } /* Dark red/maroon */
-.flight-scheduled { color: #0000FF !important; } /* Blue for scheduled */
+.flight-old { color: #666 !important; background: rgba(102, 102, 102, 0.1) !important; } /* Darker grey */
+.flight-arrival { color: #006400 !important; background: rgba(0, 100, 0, 0.15) !important; } /* Dark green, stronger tint */
+.flight-departure { color: #8B0000 !important; background: rgba(139, 0, 0, 0.15) !important; } /* Dark red/maroon, stronger */
+.flight-scheduled { color: #0000FF !important; font-weight: bold; } /* Bold blue for scheduled */
 
 /* Logo */
 #logo-overlay {
